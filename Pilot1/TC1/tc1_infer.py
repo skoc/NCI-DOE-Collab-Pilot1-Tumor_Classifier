@@ -10,14 +10,18 @@ try:
     import configparser
 except ImportError:
     import ConfigParser as configparser
+###
+import tensorflow as tf
+from tensorflow import keras
 
-from keras import backend as K
+from tensorflow.keras import backend as K
 
-from keras.layers import Input, Dense, Dropout, Activation, Conv1D, MaxPooling1D, Flatten
-from keras.optimizers import SGD, Adam, RMSprop
-from keras.models import Sequential, Model, model_from_json, model_from_yaml
-from keras.utils import np_utils
-from keras.callbacks import ModelCheckpoint, CSVLogger, ReduceLROnPlateau
+from tensorflow.keras.layers import Input, Dense, Dropout, Activation, Conv1D, MaxPooling1D, Flatten
+from tensorflow.keras.optimizers import SGD, Adam, RMSprop
+from tensorflow.keras.models import Sequential, Model, model_from_json, model_from_yaml
+from tensorflow.keras.utils import np_utils
+from tensorflow.keras.callbacks import ModelCheckpoint, CSVLogger, ReduceLROnPlateau
+###
 
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, MaxAbsScaler
