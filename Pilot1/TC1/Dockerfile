@@ -2,13 +2,9 @@ FROM nvidia/cuda:10.2-devel-ubuntu18.04
 MAINTAINER soner.koc@sbgenomics.com
 
 ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get update && apt-get install -y \
-    vim \
-    make \
-    gcc \
-    wget \
-    tar \
-    unzip 
+RUN apt-get update && apt-get install -y curl apt-utils
+RUN apt-get update && apt-get install -y apt-transport-https
+RUN apt-get update && apt-get install -y vim make gcc wget tar unzip
 
 RUN apt-get update && apt-get install -y software-properties-common
 RUN add-apt-repository ppa:graphics-drivers/ppa
@@ -37,9 +33,10 @@ RUN python3 -m pip install --upgrade pip && python3 -m pip install -U slideio
 WORKDIR /opt
 
 COPY Dockerfile /opt
-COPY enviroment.yml /opt
+COPY environment.yml /opt
 
 # install conda env
+RUN conda config --set ssl_verify no
 RUN conda env create -f environment.yml -n TC1 \
     && conda init bash \
     && echo "conda activate TC1" >> /root/.bashrc
@@ -47,6 +44,5 @@ RUN conda env create -f environment.yml -n TC1 \
 # Make RUN commands use the new environment:
 SHELL ["conda", "run", "-n", "TC1", "/bin/bash", "-c"]
 
-EXPOSE 5003
 # The code to run when container is started:
 ENTRYPOINT ["conda", "run", "-n", "TC1"]
