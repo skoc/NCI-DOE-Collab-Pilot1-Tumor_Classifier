@@ -80,10 +80,10 @@ def run(gParameters, trained_model_json, trained_model_h5):
     print('json Test accuracy:', score_json[1])
     print("json %s: %.2f%%" % (loaded_model_json.metrics_names[1], score_json[1]*100))
 
-def main():
+def main(trained_model_json, trained_model_h5):
 
     gParameters = initialize_parameters()
-    run(gParameters)
+    run(gParameters, trained_model_json, trained_model_h5)
 
 if __name__ == '__main__':
 
