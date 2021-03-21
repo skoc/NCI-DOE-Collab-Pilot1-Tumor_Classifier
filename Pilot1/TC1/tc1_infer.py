@@ -47,13 +47,13 @@ def initialize_parameters(default_model = 'tc1_default_model.txt'):
     return gParameters
 
 
-def run(gParameters):
+def run(gParameters, trained_model_json, trained_model_h5):
 
 
     # load json and create model
-    trained_model_json = gParameters['trained_model_json']
-    json_data_url =  gParameters['data_url']  + trained_model_json 
-    candle.get_file(trained_model_json, json_data_url, datadir=".")
+    # trained_model_json = gParameters['trained_model_json']
+    # json_data_url =  gParameters['data_url']  + trained_model_json 
+    # candle.get_file(trained_model_json, json_data_url, datadir=".")
 
     json_file = open(trained_model_json, 'r')
     loaded_model_json = json_file.read()
@@ -61,9 +61,9 @@ def run(gParameters):
     loaded_model_json = model_from_json(loaded_model_json)
 
     # load weights into new model
-    trained_model_h5 = gParameters['trained_model_h5']
-    h5_data_url =  gParameters['data_url']  + trained_model_h5
-    candle.get_file(trained_model_h5, h5_data_url, datadir=".")
+    # trained_model_h5 = gParameters['trained_model_h5']
+    # h5_data_url =  gParameters['data_url']  + trained_model_h5
+    # candle.get_file(trained_model_h5, h5_data_url, datadir=".")
     loaded_model_json.load_weights(trained_model_h5)
 
     loaded_model_json.compile(loss=gParameters['loss'],
@@ -90,7 +90,19 @@ def main():
     run(gParameters)
 
 if __name__ == '__main__':
-    main()
+
+    # Parse command line arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--trained_model_json', help="Json file of Trained Model", required=True)
+    parser.add_argument('--trained_model_h5', help="Weights of Trained Model", required=True)
+
+    args = parser.parse_args()
+
+    trained_model_json = args.trained_model_json
+    trained_model_h5 = args.trained_model_h5
+
+    main(trained_model_json=trained_model_json, trained_model_h5=trained_model_h5)
+
     try:
         K.clear_session()
     except AttributeError:      # theano does not have this function
