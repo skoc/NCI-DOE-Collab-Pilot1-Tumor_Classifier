@@ -43,7 +43,7 @@ def initialize_parameters(default_model = 'tc1_default_model.txt'):
     return gParameters
 
 
-def run(gParameters, trained_model_json, trained_model_h5):
+def run(gParameters, trained_model_json, trained_model_h5, train_data, test_data):
 
 
     # load json and create model
@@ -67,7 +67,7 @@ def run(gParameters, trained_model_json, trained_model_h5):
             metrics=[gParameters['metrics']])
 
     # evaluate json loaded model on test data
-    X_train, Y_train, X_test, Y_test = bmk.load_data(gParameters)
+    X_train, Y_train, X_test, Y_test = bmk.load_data(gParameters, train_data, test_data)
 
     print('X_test shape:', X_test.shape)
     print('Y_test shape:', Y_test.shape)
@@ -80,10 +80,10 @@ def run(gParameters, trained_model_json, trained_model_h5):
     print('json Test accuracy:', score_json[1])
     print("json %s: %.2f%%" % (loaded_model_json.metrics_names[1], score_json[1]*100))
 
-def main(trained_model_json, trained_model_h5):
+def main(trained_model_json, trained_model_h5, train_data, test_data):
 
     gParameters = initialize_parameters()
-    run(gParameters, trained_model_json, trained_model_h5)
+    run(gParameters, trained_model_json, trained_model_h5, train_data, test_data)
 
 if __name__ == '__main__':
 
@@ -91,13 +91,18 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--trained_model_json', help="Json file of Trained Model", required=True)
     parser.add_argument('--trained_model_h5', help="Weights of Trained Model", required=True)
+    parser.add_argument('--train_data', help="Train Data from the Platform", required=True)
+    parser.add_argument('--test_data', help="Test Data from the Platform", required=True)
 
     args = parser.parse_args()
 
     trained_model_json = args.trained_model_json
     trained_model_h5 = args.trained_model_h5
 
-    main(trained_model_json=trained_model_json, trained_model_h5=trained_model_h5)
+    main(trained_model_json=trained_model_json, 
+        trained_model_h5=trained_model_h5, 
+        train_data=train_data, 
+        test_data=test_data)
 
     try:
         K.clear_session()
