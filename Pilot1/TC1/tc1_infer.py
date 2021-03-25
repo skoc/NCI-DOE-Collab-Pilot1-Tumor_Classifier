@@ -82,7 +82,7 @@ def run(gParameters, trained_model_json, trained_model_h5, train_data, test_data
 
 def main(trained_model_json, trained_model_h5, train_data, test_data):
 
-    gParameters = initialize_parameters()
+    gParameters = initialize_parameters(default_model = 'tc1_default_model.json')
     run(gParameters, trained_model_json, trained_model_h5, train_data, test_data)
 
 if __name__ == '__main__':
