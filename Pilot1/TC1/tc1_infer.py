@@ -80,9 +80,9 @@ def run(gParameters, trained_model_json, trained_model_h5, train_data, test_data
     print('json Test accuracy:', score_json[1])
     print("json %s: %.2f%%" % (loaded_model_json.metrics_names[1], score_json[1]*100))
 
-def main(trained_model_json, trained_model_h5, train_data, test_data):
+def main(trained_model_json, trained_model_h5, train_data, test_data, tc1_default_model):
 
-    gParameters = initialize_parameters(default_model = 'tc1_default_model.json')
+    gParameters = initialize_parameters(default_model = tc1_default_model)
     run(gParameters, trained_model_json, trained_model_h5, train_data, test_data)
 
 if __name__ == '__main__':
@@ -93,16 +93,21 @@ if __name__ == '__main__':
     parser.add_argument('--trained_model_h5', help="Weights of Trained Model", required=True)
     parser.add_argument('--train_data', help="Train Data from the Platform", required=True)
     parser.add_argument('--test_data', help="Test Data from the Platform", required=True)
+    parser.add_argument('--tc1_default_model', help="Parameters of the model", required=True)
 
     args = parser.parse_args()
 
     trained_model_json = args.trained_model_json
     trained_model_h5 = args.trained_model_h5
+    train_data = args.train_data
+    test_data = args.test_data
+    tc1_default_model = args.tc1_default_model
 
     main(trained_model_json=trained_model_json, 
         trained_model_h5=trained_model_h5, 
         train_data=train_data, 
-        test_data=test_data)
+        test_data=test_data,
+        tc1_default_model=tc1_default_model)
 
     try:
         K.clear_session()
