@@ -103,6 +103,9 @@ if __name__ == '__main__':
     test_data = args.test_data
     tc1_default_model = args.tc1_default_model
 
+    # Path fix for empty tc1_default_model inputs, when it's copied from the required files section
+    tc1_default_model = os.path.dirname(train_data) + os.path.basename(tc1_default_model)
+
     main(trained_model_json=trained_model_json, 
         trained_model_h5=trained_model_h5, 
         train_data=train_data, 
