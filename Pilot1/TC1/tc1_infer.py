@@ -106,7 +106,7 @@ if __name__ == '__main__':
     parser.add_argument('--trained_model_json', help="Json file of Trained Model", required=True)
     parser.add_argument('--trained_model_h5', help="Weights of Trained Model", required=True)
     # parser.add_argument('--train_data', help="Train Data from the Platform", required=True)
-    parser.add_argument('--test_data', help="Test Data from the Platform", required=True,
+    parser.add_argument('--test_data', help="Test Data from the Platform", required=True)
     parser.add_argument('--config_file', help="Parameters of the model", required=True)
 
     args = parser.parse_args()
