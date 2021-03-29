@@ -56,6 +56,8 @@ PARAMETERS_CANDLE = [
                   'profiling',
                   # cyclic learning rate
                   'clr_flag', 'clr_mode', 'clr_base_lr', 'clr_max_lr', 'clr_gamma'
+                  # model loading via command line
+                  'trained_model_h5', 'trained_model_json'
                   ]
 
 CONFLICT_LIST = [
@@ -701,6 +703,15 @@ def get_common_parser(parser):
                         default=argparse.SUPPRESS,
                         #default=0.999994, 
                         help="Gamma parameter for learning cycle LR.")
+
+    # trained model inputs h5 and JSON
+    parser.add_argument("--trained_model_h5", action="store",
+                        default=argparse.SUPPRESS,
+                        help="trained model h5 file")
+
+    parser.add_argument("--trained_model_json", action="store",
+                        default=argparse.SUPPRESS,
+                        help="trained model JSON file")
 
     return parser
 
