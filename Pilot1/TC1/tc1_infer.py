@@ -29,6 +29,8 @@ sys.path.append(lib_path2)
 import tc1 as bmk
 import candle
 
+def eprint(args):
+    sys.stderr.write(str(args) + "\n")
 
 def initialize_parameters(default_model = 'tc1_default_model.txt'):
 
@@ -69,20 +71,21 @@ def run(gParameters, trained_model_json, trained_model_h5, train_data, test_data
     # evaluate json loaded model on test data
     X_train, Y_train, X_test, Y_test = bmk.load_data(gParameters, train_data, test_data)
 
-    print('X_test shape:', X_test.shape)
-    print('Y_test shape:', Y_test.shape)
+    eprint(f"X_test shape: {X_test.shape}")
+    eprint(f"Y_test shape: {Y_test.shape}")
 
     # this reshaping is critical for the Conv1D to work
     X_test = np.expand_dims(X_test, axis=2)
 
     score_json = loaded_model_json.evaluate(X_test, Y_test, verbose=0)
-    print('json Test score:', score_json[0])
-    print('json Test accuracy:', score_json[1])
-    print("json %s: %.2f%%" % (loaded_model_json.metrics_names[1], score_json[1]*100))
+    eprint(f"json Test score: {score_json[0]}")
+    eprint(f"json Test accuracy: {score_json[1]}" )
+    eprint(f"json {loaded_model_json.metrics_names[1]}: {score_json[1]*100}")
 
 def main(trained_model_json, trained_model_h5, train_data, test_data, tc1_default_model):
 
     gParameters = initialize_parameters(default_model = tc1_default_model)
+    eprint(f"gParameters: {gParameters}")
     run(gParameters, trained_model_json, trained_model_h5, train_data, test_data)
 
 if __name__ == '__main__':
