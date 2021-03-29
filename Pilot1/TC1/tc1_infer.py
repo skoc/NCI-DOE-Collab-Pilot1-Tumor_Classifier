@@ -45,7 +45,7 @@ def initialize_parameters(default_model = 'tc1_default_model.txt'):
     return gParameters
 
 
-def run(gParameters, trained_model_json, trained_model_h5, train_data, test_data):
+def run(gParameters, trained_model_json, trained_model_h5, test_data):
 
 
     # load json and create model
@@ -93,7 +93,7 @@ def run(gParameters, trained_model_json, trained_model_h5, train_data, test_data
     df_out.to_csv(gParameters['model_name'] + '.csv', index=False)
 
 
-def main(trained_model_json, trained_model_h5, test_data):
+def main(trained_model_json, trained_model_h5, test_data, tc1_default_model):
 
     gParameters = initialize_parameters(default_model = tc1_default_model)
     eprint(f"[DEBUG] gParameters: {gParameters}")
@@ -106,8 +106,8 @@ if __name__ == '__main__':
     parser.add_argument('--trained_model_json', help="Json file of Trained Model", required=True)
     parser.add_argument('--trained_model_h5', help="Weights of Trained Model", required=True)
     # parser.add_argument('--train_data', help="Train Data from the Platform", required=True)
-    parser.add_argument('--test_data', help="Test Data from the Platform", required=True)
-    # parser.add_argument('--config_file', help="Parameters of the model", required=True)
+    parser.add_argument('--test_data', help="Test Data from the Platform", required=True,
+    parser.add_argument('--config_file', help="Parameters of the model", required=True)
 
     args = parser.parse_args()
 
@@ -115,16 +115,16 @@ if __name__ == '__main__':
     trained_model_h5 = args.trained_model_h5
     # train_data = args.train_data
     test_data = args.test_data
-    # tc1_default_model = args.config_file
+    tc1_default_model = args.config_file
 
     # Path fix for empty tc1_default_model inputs, when it's copied from the required files section
-    # tc1_default_model = os.path.dirname(train_data) + os.path.basename(tc1_default_model)
+    tc1_default_model = os.path.dirname(test_data) + os.path.basename(tc1_default_model)
 
     main(trained_model_json=trained_model_json, 
         trained_model_h5=trained_model_h5, 
         # train_data=train_data, 
-        test_data=test_data)
-        # tc1_default_model=tc1_default_model)
+        test_data=test_data,
+        tc1_default_model=tc1_default_model)
 
     try:
         K.clear_session()
