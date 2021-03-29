@@ -783,6 +783,63 @@ def load_Xy_data2(train_file, test_file, class_col=None, drop_cols=None, n_cols=
     return (X_train, y_train), (X_val, y_val), (X_test, y_test)
 
 
+def load_Xy_test_data_noheader(test_file, classes, usecols=None, scaling=None, dtype=DEFAULT_DATATYPE):
+    """ Load testing data from the files specified, with the first column to use as label.
+        Construct corresponding testing pandas DataFrames,
+        separated into data (i.e. features) and labels.
+        Labels to output are one-hot encoded (categorical).
+        Columns to load can be selected. Data can be rescaled.
+        Testing partitions (coming from the respective files)
+        are preserved.
+        This function assumes that the files do not contain a header.
+
+        Parameters
+        ----------
+        test_file : filename
+            Name of the file to load the testing data.
+        classes : integer
+            Number of total classes to consider when
+            building the categorical (one-hot) label encoding.
+        usecols : list
+            List of column indices to load from the files.
+            (Default: None, all the columns are used).
+        scaling : string
+            String describing type of scaling to apply.
+            Options recognized: 'maxabs', 'minmax', 'std'.
+            'maxabs' : scales data to range [-1 to 1].
+            'minmax' : scales data to range [-1 to 1].
+            'std'    : scales data to normal variable with mean 0 and standard deviation 1.
+            (Default: None, no scaling).
+        dtype : data type
+            Data type to use for the output pandas DataFrames.
+            (Default: DEFAULT_DATATYPE defined in default_utils).
+
+        Return
+        ----------
+        X_test : pandas DataFrame
+            Data features for testing loaded in a pandas DataFrame and
+            pre-processed as specified.
+        Y_test : pandas DataFrame
+            Data labels for testing loaded in a pandas DataFrame.
+            One-hot encoding (categorical) is used.
+    """
+    print('Loading Test data...')
+    df_test = (pd.read_csv(test_file, header=None, usecols=usecols).values).astype(dtype)
+    print('done')
+
+    print('df_test shape:', df_test.shape)
+
+    df_y_test = df_test[:,0].astype('int')
+    Y_test = to_categorical(df_y_test, classes)
+    X_test = df_test[:, 1:].astype(dtype)
+
+    # Scale data
+    if scaling is not None:
+        X_test = scale_array(X_test, scaling)
+
+    return X_test, Y_test
+
+
 def load_Xy_data_noheader(train_file, test_file, classes, usecols=None, scaling=None, dtype=DEFAULT_DATATYPE):
     """ Load training and testing data from the files specified, with the first column to use as label.
         Construct corresponding training and testing pandas DataFrames,
