@@ -6,6 +6,7 @@ from __future__ import absolute_import
 from data_utils import load_csv_data
 from data_utils import load_Xy_one_hot_data2
 from data_utils import load_Xy_data_noheader
+from data_utils import load_Xy_test_data_noheader
 from data_utils import drop_impute_and_scale_dataframe
 from data_utils import discretize_dataframe
 from data_utils import discretize_array
