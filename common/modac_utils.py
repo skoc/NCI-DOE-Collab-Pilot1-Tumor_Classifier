@@ -29,7 +29,7 @@ def get_file_from_modac(fname, origin):
             Path to the downloaded file      
     """
     eprint('Downloading data from modac.cancer.gov, make sure you have an account first.')
-    eprint("File url:", origin)
+    eprint(f"File url: {origin}")
     total_size_in_bytes = get_dataObject_modac_filesize(origin)
 
     auth = authenticate_modac()
@@ -38,7 +38,7 @@ def get_file_from_modac(fname, origin):
     auth = (modac_user, modac_pass)
 
     post_url = origin.replace("/v2/", "/") + '/download'
-    eprint("Downloading: " + post_url + " ...")
+    eprint(f"Downloading: {post_url} ...")
     response = requests.post(post_url, data = data, headers = headers, auth = auth, stream = True)
     if response.status_code != 200:
         eprint("Error downloading from modac.cancer.gov")
@@ -53,7 +53,7 @@ def get_file_from_modac(fname, origin):
     if total_size_in_bytes != 0 and progress_bar.n != total_size_in_bytes:
         raise Exception ("ERROR, something went wrong while downloading ", post_url)
 
-    eprint('Saved file to: ' + fname)
+    eprint(f"Saved file to: {fname}")
     return fname
 
 
