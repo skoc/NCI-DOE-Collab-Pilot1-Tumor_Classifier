@@ -43,13 +43,13 @@ def initialize_parameters(default_model = 'tc1_default_model.txt'):
     return gParameters
 
 
-def run(gParameters):#, trained_model_json, trained_model_h5, train_data, test_data):
+def run(gParameters, trained_model_json, trained_model_h5, train_data, test_data):
 
 
     # load json and create model
-    trained_model_json = gParameters['trained_model_json']
-    json_data_url =  gParameters['data_url']  + trained_model_json 
-    candle.get_file(trained_model_json, json_data_url, datadir=".")
+    # trained_model_json = gParameters['trained_model_json']
+    # json_data_url =  gParameters['data_url']  + trained_model_json 
+    # candle.get_file(trained_model_json, json_data_url, datadir=".")
 
     json_file = open(trained_model_json, 'r')
     loaded_model_json = json_file.read()
@@ -57,9 +57,9 @@ def run(gParameters):#, trained_model_json, trained_model_h5, train_data, test_d
     loaded_model_json = model_from_json(loaded_model_json)
 
     # load weights into new model
-    trained_model_h5 = gParameters['trained_model_h5']
-    h5_data_url =  gParameters['data_url']  + trained_model_h5
-    candle.get_file(trained_model_h5, h5_data_url, datadir=".")
+    # trained_model_h5 = gParameters['trained_model_h5']
+    # h5_data_url =  gParameters['data_url']  + trained_model_h5
+    # candle.get_file(trained_model_h5, h5_data_url, datadir=".")
     loaded_model_json.load_weights(trained_model_h5)
 
     loaded_model_json.compile(loss=gParameters['loss'],
@@ -80,43 +80,37 @@ def run(gParameters):#, trained_model_json, trained_model_h5, train_data, test_d
     print('json Test accuracy:', score_json[1])
     print("json %s: %.2f%%" % (loaded_model_json.metrics_names[1], score_json[1]*100))
 
-def main():
+def main(trained_model_json, trained_model_h5, train_data, test_data, tc1_default_model):
 
-    gParameters = initialize_parameters()
-    run(gParameters)
-
-# def main(trained_model_json, trained_model_h5, train_data, test_data, tc1_default_model):
-
-#     gParameters = initialize_parameters()#(default_model = tc1_default_model)
-#     run(gParameters, trained_model_json, trained_model_h5, train_data, test_data)
+    gParameters = initialize_parameters(default_model = tc1_default_model)
+    run(gParameters, trained_model_json, trained_model_h5, train_data, test_data)
 
 if __name__ == '__main__':
 
     # Parse command line arguments
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument('--trained_model_json', help="Json file of Trained Model", required=True)
-    # parser.add_argument('--trained_model_h5', help="Weights of Trained Model", required=True)
-    # parser.add_argument('--train_data', help="Train Data from the Platform", required=True)
-    # parser.add_argument('--test_data', help="Test Data from the Platform", required=True)
-    # parser.add_argument('--tc1_default_model', help="Parameters of the model", required=True)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--trained_model_json', help="Json file of Trained Model", required=True)
+    parser.add_argument('--trained_model_h5', help="Weights of Trained Model", required=True)
+    parser.add_argument('--train_data', help="Train Data from the Platform", required=True)
+    parser.add_argument('--test_data', help="Test Data from the Platform", required=True)
+    parser.add_argument('--config_file', help="Parameters of the model", required=True)
 
-    # args = parser.parse_args()
+    args = parser.parse_args()
 
-    # trained_model_json = "/tc1/data/tc1.model.json"#args.trained_model_json
-    # trained_model_h5 = "/tc1/data/tc1.model.h5"#args.trained_model_h5
-    # train_data = "/tc1/data/type_18_300_train.csv"#args.train_data
-    # test_data = "/tc1/data/type_18_300_test.csv"#args.test_data
-    # tc1_default_model = "/tc1/Pilot1/TC1/tc1_default_model.txt"#args.tc1_default_model
+    trained_model_json = args.trained_model_json
+    trained_model_h5 = args.trained_model_h5
+    train_data = args.train_data
+    test_data = args.test_data
+    tc1_default_model = args.config_file
 
     # Path fix for empty tc1_default_model inputs, when it's copied from the required files section
-    # tc1_default_model = os.path.dirname(train_data) + os.path.basename(tc1_default_model)
+    tc1_default_model = os.path.dirname(train_data) + os.path.basename(tc1_default_model)
 
-    # main(trained_model_json=trained_model_json, 
-    #     trained_model_h5=trained_model_h5, 
-    #     train_data=train_data, 
-    #     test_data=test_data,
-    #     tc1_default_model=tc1_default_model)
-    main()
+    main(trained_model_json=trained_model_json, 
+        trained_model_h5=trained_model_h5, 
+        train_data=train_data, 
+        test_data=test_data,
+        tc1_default_model=tc1_default_model)
 
     try:
         K.clear_session()
