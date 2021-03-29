@@ -62,8 +62,8 @@ class BenchmarkTC1(candle.Benchmark):
 
 def load_data(params, train_path, test_path):
 
-    train_path = candle.fetch_file(params['data_url'] + params['train_data'], 'Pilot1')
-    test_path = candle.fetch_file(params['data_url'] + params['test_data'], 'Pilot1')
+    # train_path = candle.fetch_file(params['data_url'] + params['train_data'], 'Pilot1')
+    # test_path = candle.fetch_file(params['data_url'] + params['test_data'], 'Pilot1')
     
     if params['feature_subsample'] > 0:
         usecols = list(range(params['feature_subsample']))
