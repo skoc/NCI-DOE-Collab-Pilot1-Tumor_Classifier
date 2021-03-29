@@ -5,8 +5,8 @@ from tqdm import tqdm
 import os
 import sys
 
-modac_user = "soner.koc@sbgenomics.com"
-modac_pass = "v.m252627CE"#None
+modac_user = None
+modac_pass = None
 
 def eprint(args):
     sys.stderr.write(str(args) + "\n")
