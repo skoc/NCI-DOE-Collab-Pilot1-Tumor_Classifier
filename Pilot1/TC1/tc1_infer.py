@@ -69,24 +69,35 @@ def run(gParameters, trained_model_json, trained_model_h5, train_data, test_data
             metrics=[gParameters['metrics']])
 
     # evaluate json loaded model on test data
-    X_train, Y_train, X_test, Y_test = bmk.load_data(gParameters, train_data, test_data)
+    X_test, Y_test = bmk.load_test_data(gParameters, test_data)
 
-    eprint(f"X_test shape: {X_test.shape}")
-    eprint(f"Y_test shape: {Y_test.shape}")
+    eprint(f"[DEBUG] X_test shape: {X_test.shape}")
+    eprint(f"[DEBUG] Y_test shape: {Y_test.shape}")
 
     # this reshaping is critical for the Conv1D to work
     X_test = np.expand_dims(X_test, axis=2)
 
     score_json = loaded_model_json.evaluate(X_test, Y_test, verbose=0)
-    eprint(f"json Test score: {score_json[0]}")
-    eprint(f"json Test accuracy: {score_json[1]}" )
-    eprint(f"json {loaded_model_json.metrics_names[1]}: {score_json[1]*100}")
+    eprint(f"[DEBUG] json Test score: {score_json[0]}")
+    eprint(f"[DEBUG] json Test accuracy: {score_json[1]}" )
+    eprint(f"[DEBUG] json {loaded_model_json.metrics_names[1]}: {score_json[1]*100}")
+    eprint(f"[DEBUG] score_json: {score_json}")
 
-def main(trained_model_json, trained_model_h5, train_data, test_data, tc1_default_model):
+    # Write Test Scores to File
+    dict_output = {}
+    dict_output['Test score'], dict_output['Test accuracy']= score_json[0], score_json[1]
+    
+    columns = list(dict_output.keys())
+    df_out = pd.DataFrame(columns=columns)
+    df_out.loc[0] = list(dict_output.values())
+    df_out.to_csv(gParameters['model_name'] + '.csv', index=False)
+
+
+def main(trained_model_json, trained_model_h5, test_data):
 
     gParameters = initialize_parameters(default_model = tc1_default_model)
-    eprint(f"gParameters: {gParameters}")
-    run(gParameters, trained_model_json, trained_model_h5, train_data, test_data)
+    eprint(f"[DEBUG] gParameters: {gParameters}")
+    run(gParameters, trained_model_json, trained_model_h5, test_data)
 
 if __name__ == '__main__':
 
@@ -94,26 +105,26 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--trained_model_json', help="Json file of Trained Model", required=True)
     parser.add_argument('--trained_model_h5', help="Weights of Trained Model", required=True)
-    parser.add_argument('--train_data', help="Train Data from the Platform", required=True)
+    # parser.add_argument('--train_data', help="Train Data from the Platform", required=True)
     parser.add_argument('--test_data', help="Test Data from the Platform", required=True)
-    parser.add_argument('--config_file', help="Parameters of the model", required=True)
+    # parser.add_argument('--config_file', help="Parameters of the model", required=True)
 
     args = parser.parse_args()
 
     trained_model_json = args.trained_model_json
     trained_model_h5 = args.trained_model_h5
-    train_data = args.train_data
+    # train_data = args.train_data
     test_data = args.test_data
-    tc1_default_model = args.config_file
+    # tc1_default_model = args.config_file
 
     # Path fix for empty tc1_default_model inputs, when it's copied from the required files section
-    tc1_default_model = os.path.dirname(train_data) + os.path.basename(tc1_default_model)
+    # tc1_default_model = os.path.dirname(train_data) + os.path.basename(tc1_default_model)
 
     main(trained_model_json=trained_model_json, 
         trained_model_h5=trained_model_h5, 
-        train_data=train_data, 
-        test_data=test_data,
-        tc1_default_model=tc1_default_model)
+        # train_data=train_data, 
+        test_data=test_data)
+        # tc1_default_model=tc1_default_model)
 
     try:
         K.clear_session()
