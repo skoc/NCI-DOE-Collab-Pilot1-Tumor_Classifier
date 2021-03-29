@@ -3,10 +3,13 @@ import urllib
 import requests
 from tqdm import tqdm
 import os
-
+import sys
 
 modac_user = "soner.koc@sbgenomics.com"
 modac_pass = "v.m252627CE"#None
+
+def eprint(args):
+    sys.stderr.write(str(args) + "\n")
 
 def get_file_from_modac(fname, origin):
     """ Downloads a file from the "Model and Data Clearning House" (MoDAC)
@@ -25,8 +28,8 @@ def get_file_from_modac(fname, origin):
         string
             Path to the downloaded file      
     """
-    print('Downloading data from modac.cancer.gov, make sure you have an account first.')
-    print("File url:", origin)
+    eprint('Downloading data from modac.cancer.gov, make sure you have an account first.')
+    eprint("File url:", origin)
     total_size_in_bytes = get_dataObject_modac_filesize(origin)
 
     auth = authenticate_modac()
@@ -35,10 +38,10 @@ def get_file_from_modac(fname, origin):
     auth = (modac_user, modac_pass)
 
     post_url = origin.replace("/v2/", "/") + '/download'
-    print("Downloading: " + post_url + " ...")
+    eprint("Downloading: " + post_url + " ...")
     response = requests.post(post_url, data = data, headers = headers, auth = auth, stream = True)
     if response.status_code != 200:
-        print("Error downloading from modac.cancer.gov")
+        eprint("Error downloading from modac.cancer.gov")
         raise Exception("Response code: {0}, Response message: {1}".format(response.status_code, response.text))
     block_size = 1024 #1 Kibibyte
     progress_bar = tqdm(total=total_size_in_bytes, unit='iB', unit_scale=True)
@@ -50,7 +53,7 @@ def get_file_from_modac(fname, origin):
     if total_size_in_bytes != 0 and progress_bar.n != total_size_in_bytes:
         raise Exception ("ERROR, something went wrong while downloading ", post_url)
 
-    print('Saved file to: ' + fname)
+    eprint('Saved file to: ' + fname)
     return fname
 
 
@@ -131,7 +134,7 @@ def get_dataObject_modac_meta(data_object_path):
     
     get_response = requests.get(data_object_path, auth = auth)
     if get_response.status_code != 200:
-        print("Error downloading from modac.cancer.gov")
+        eprint("Error downloading from modac.cancer.gov")
         raise Exception("Response code: {0}, Response message: {1}".format(get_response.status_code, get_response.text))
 
     metadata_dic = json.loads(get_response.text)
