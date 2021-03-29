@@ -43,7 +43,7 @@ def initialize_parameters(default_model = 'tc1_default_model.txt'):
     return gParameters
 
 
-def run(gParameters, trained_model_json, trained_model_h5, train_data, test_data):
+def run(gParameters):#, trained_model_json, trained_model_h5, train_data, test_data):
 
 
     # load json and create model
@@ -85,10 +85,10 @@ def main():
     gParameters = initialize_parameters()
     run(gParameters)
 
-def main(trained_model_json, trained_model_h5, train_data, test_data, tc1_default_model):
+# def main(trained_model_json, trained_model_h5, train_data, test_data, tc1_default_model):
 
-    gParameters = initialize_parameters()#(default_model = tc1_default_model)
-    run(gParameters, trained_model_json, trained_model_h5, train_data, test_data)
+#     gParameters = initialize_parameters()#(default_model = tc1_default_model)
+#     run(gParameters, trained_model_json, trained_model_h5, train_data, test_data)
 
 if __name__ == '__main__':
 
