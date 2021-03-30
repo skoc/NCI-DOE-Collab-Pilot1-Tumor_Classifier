@@ -443,7 +443,7 @@ def finalize_parameters(bmk, format_config='txt'):
     except AttributeError: # The 'config_file' option was not set by command-line
         conffile = bmk.conffile # use default file
     else: # a 'config_file' has been set --> use this file
-        conffile = os.path.join(bmk.file_path, conffile_txt)
+        conffile = conffile_txt#os.path.join(bmk.file_path, conffile_txt)
 
     #print("Configuration file: ", conffile)
     fileParameters = bmk.read_config_file_json(conffile) if format_config == 'json' else bmk.read_config_file(conffile)#aux.config_file)#args.config_file)
@@ -873,7 +873,7 @@ class Benchmark:
         self.parser = parser
 
         # Set default configuration file
-        self.conffile = os.path.join(self.file_path, self.default_model)
+        self.conffile = self.default_model#os.path.join(self.file_path, self.default_model)
 
 
     def parse_from_benchmark(self):
