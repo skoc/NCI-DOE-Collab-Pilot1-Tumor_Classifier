@@ -32,15 +32,15 @@ import candle
 def eprint(args):
     sys.stderr.write(str(args) + "\n")
 
-def initialize_parameters(default_model = 'tc1_default_model.txt'):
+def initialize_parameters(default_model = 'tc1_default_model.json'):
 
     # Build benchmark object
     tc1Bmk = bmk.BenchmarkTC1(file_path, default_model, 'keras',
     prog='tc1_baseline', desc='Multi-task (DNN) for data extraction from clinical reports - Pilot 3 Benchmark 1')
 
     # Initialize parameters
-    gParameters = candle.finalize_parameters(tc1Bmk)
-    eprint(f"gParameters: {gParameters}")
+    gParameters = candle.finalize_parameters(tc1Bmk, format_config="json")
+    eprint(f"[DEBUG] gParameters: {gParameters}")
     #benchmark.logger.info('Params: {}'.format(gParameters))
 
     return gParameters
@@ -207,9 +207,9 @@ def run(gParameters, train_data, test_data):
     return history
 
 
-def main(train_data, test_data, config_file):
+def main(train_data, test_data):
 
-    gParameters = initialize_parameters(default_model=config_file)
+    gParameters = initialize_parameters()
     run(gParameters, train_data, test_data)
 
 if __name__ == '__main__':
@@ -218,15 +218,15 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--train_data', help="Train Data from the Platform", required=True)
     parser.add_argument('--test_data', help="Test Data from the Platform", required=True)
-    parser.add_argument('--config_file', help="Parameters of the model", required=True)
+    # parser.add_argument('--config_file', help="Parameters of the model", required=True)
 
     args = parser.parse_args()
 
     train_data = args.train_data
     test_data = args.test_data
-    tc1_default_model = args.config_file
+    # tc1_default_model = args.config_file
 
-    main(train_data, test_data, tc1_default_model)
+    main(train_data, test_data)
 
     try:
         K.clear_session()
