@@ -40,6 +40,7 @@ def initialize_parameters(default_model = 'tc1_default_model.txt'):
 
     # Initialize parameters
     gParameters = candle.finalize_parameters(tc1Bmk)
+    eprinf(f"gParameters: {gParameters}")
     #benchmark.logger.info('Params: {}'.format(gParameters))
 
     return gParameters
@@ -114,6 +115,7 @@ def run(gParameters, train_data, test_data):
     model.add(Activation(gParameters['out_activation']))
 
     model.summary()
+    eprint(model.summary())
 
     model.compile(loss=gParameters['loss'],
               optimizer=gParameters['optimizer'],
