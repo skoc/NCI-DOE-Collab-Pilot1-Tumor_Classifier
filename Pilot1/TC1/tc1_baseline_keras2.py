@@ -29,6 +29,8 @@ sys.path.append(lib_path2)
 import tc1 as bmk
 import candle
 
+def eprint(args):
+    sys.stderr.write(str(args) + "\n")
 
 def initialize_parameters(default_model = 'tc1_default_model.txt'):
 
@@ -43,15 +45,15 @@ def initialize_parameters(default_model = 'tc1_default_model.txt'):
     return gParameters
 
 
-def run(gParameters):
+def run(gParameters, train_data, test_data):
 
-    X_train, Y_train, X_test, Y_test = bmk.load_data(gParameters)
+    X_train, Y_train, X_test, Y_test = bmk.load_data(gParameters, train_data, test_data)
 
-    print('X_train shape:', X_train.shape)
-    print('X_test shape:', X_test.shape)
+    eprint(f'X_train shape: {X_train.shape}')
+    eprint(f'X_test shape: {X_test.shape}')
 
-    print('Y_train shape:', Y_train.shape)
-    print('Y_test shape:', Y_test.shape)
+    eprint(f'Y_train shape: {Y_train.shape}')
+    eprint(f'Y_test shape: {Y_test.shape}')
 
     x_train_len = X_train.shape[1]
 
@@ -60,8 +62,8 @@ def run(gParameters):
     X_train = np.expand_dims(X_train, axis=2)
     X_test = np.expand_dims(X_test, axis=2)
 
-    print('X_train shape:', X_train.shape)
-    print('X_test shape:', X_test.shape)
+    eprint(f'X_train shape: {X_train.shape}')
+    eprint(f'X_test shape: {X_test.shape}')
 
     model = Sequential()
     dense_first = True
@@ -137,8 +139,8 @@ def run(gParameters):
 
     score = model.evaluate(X_test, Y_test, verbose=0)
 
-    print('Test score:', score[0])
-    print('Test accuracy:', score[1])
+    eprint(f'Test score: {score[0]}')
+    eprint(f'Test accuracy: {score[1]}')
 
     # serialize model to JSON
     model_json = model.to_json()
@@ -153,7 +155,7 @@ def run(gParameters):
 
     # serialize weights to HDF5
     model.save_weights("{}/{}.model.h5".format(output_dir, model_name))
-    print("Saved model to disk")
+    eprint("[DEBUG] Saved model to disk")
 
     # load json and create model
     json_file = open('{}/{}.model.json'.format(output_dir, model_name), 'r')
@@ -171,7 +173,7 @@ def run(gParameters):
 
     # load weights into new model
     loaded_model_json.load_weights('{}/{}.model.h5'.format(output_dir, model_name))
-    print("Loaded json model from disk")
+    eprint("[DEBUG] Loaded json model from disk")
 
     # evaluate json loaded model on test data
     loaded_model_json.compile(loss=gParameters['loss'],
@@ -179,16 +181,15 @@ def run(gParameters):
             metrics=[gParameters['metrics']])
     score_json = loaded_model_json.evaluate(X_test, Y_test, verbose=0)
 
-    print('json Test score:', score_json[0])
-    print('json Test accuracy:', score_json[1])
+    eprint(f'[DEBUG] json Test score: {score_json[0]}')
+    eprint(f'[DEBUG] json Test accuracy: {score_json[1]}')
 
-    print("json %s: %.2f%%" % (loaded_model_json.metrics_names[1], score_json[1]*100))
-
+    eprint(f"[DEBUG] json {loaded_model_json.metrics_names[1]}: {score_json[1]*100}")
 
 
     # load weights into new model
     loaded_model_yaml.load_weights('{}/{}.model.h5'.format(output_dir, model_name))
-    print("Loaded yaml model from disk")
+    eprint(f"[DEBUG] Loaded yaml model from disk")
 
     # evaluate loaded model on test data
     loaded_model_yaml.compile(loss=gParameters['loss'],
@@ -196,21 +197,35 @@ def run(gParameters):
             metrics=[gParameters['metrics']])
     score_yaml = loaded_model_yaml.evaluate(X_test, Y_test, verbose=0)
 
-    print('yaml Test score:', score_yaml[0])
-    print('yaml Test accuracy:', score_yaml[1])
+    eprint(f'[DEBUG] yaml Test score: {score_yaml[0]}')
+    eprint(f'[DEBUG] yaml Test accuracy: {score_yaml[1]}')
 
-    print("yaml %s: %.2f%%" % (loaded_model_yaml.metrics_names[1], score_yaml[1]*100))
+    eprint(f"[DEBUG] yaml {loaded_model_yaml.metrics_names[1]}: {score_yaml[1]*100}")
 
     return history
 
 
-def main():
+def main(train_data, test_data, config_file):
 
-    gParameters = initialize_parameters()
-    run(gParameters)
+    gParameters = initialize_parameters(default_model=config_file)
+    run(gParameters, train_data, test_data)
 
 if __name__ == '__main__':
-    main()
+
+    # Parse command line arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--train_data', help="Train Data from the Platform", required=True)
+    parser.add_argument('--test_data', help="Test Data from the Platform", required=True)
+    parser.add_argument('--config_file', help="Parameters of the model", required=True)
+
+    args = parser.parse_args()
+
+    train_data = args.train_data
+    test_data = args.test_data
+    tc1_default_model = args.config_file
+
+    main(train_data, test_data, tc1_default_model)
+
     try:
         K.clear_session()
     except AttributeError:      # theano does not have this function
