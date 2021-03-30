@@ -16,6 +16,7 @@ try:
     import configparser
 except ImportError:
     import ConfigParser as configparser
+import json
 
 file_path = os.path.dirname(os.path.realpath(__file__))
 lib_path = os.path.abspath(os.path.join(file_path, '..', '..', 'common'))
@@ -410,7 +411,7 @@ def check_file_parameters_exists(params_parser, params_benchmark, params_file):
         warnings.warn(message, RuntimeWarning)
 
 
-def finalize_parameters(bmk):
+def finalize_parameters(bmk, format_config='txt'):
     """Utility to parse parameters in common as well as parameters
         particular to each benchmark.
 
@@ -445,7 +446,7 @@ def finalize_parameters(bmk):
         conffile = os.path.join(bmk.file_path, conffile_txt)
 
     #print("Configuration file: ", conffile)
-    fileParameters = bmk.read_config_file(conffile)#aux.config_file)#args.config_file)
+    fileParameters = bmk.read_config_file_json(conffile) if format_config == 'json' else bmk.read_config_file(conffile)#aux.config_file)#args.config_file)
     # Get command-line parameters
     args = bmk.parser.parse_args()
     #print ('Params:', fileParameters)
@@ -964,6 +965,18 @@ class Benchmark:
                     fileParams[k] = eval(v)
         fileParams = self.format_benchmark_config_arguments(fileParams)
         #pprint(fileParams)
+
+        return fileParams
+
+
+
+    def read_config_file_json(self, file):
+        """Functionality to read the JSON configue file
+           specific for each benchmark.
+        """
+        with open(file, 'r') as config_file:
+            fileParams = json.load(config_file)
+        fileParams = self.format_benchmark_config_arguments(fileParams)
 
         return fileParams
 
