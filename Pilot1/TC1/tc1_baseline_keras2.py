@@ -129,7 +129,8 @@ def run(gParameters, train_data, test_data):
     model_name = gParameters['model_name']
     path = '{}/{}.autosave.model.h5'.format(output_dir, model_name)
     checkpointer = ModelCheckpoint(filepath=path, verbose=1, save_weights_only=False, save_best_only=True)
-    csv_logger = CSVLogger('{}/training.log'.format(output_dir))
+    csv_logger = CSVLogger('{}/{}.training.log'.format(output_dir, model_name))
+    
     reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=10, verbose=1, mode='auto', epsilon=0.0001, cooldown=0, min_lr=0)
 
     history = model.fit(X_train, Y_train,
