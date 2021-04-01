@@ -113,7 +113,7 @@ def plot_predictions(validation_labels, pred, parameters_dict = {}, title=''):
     plt.show()
 
 # TRAINING OR TESTING
-def plot_confusion_matrix(cm, class_names, parameters_dict = {}, title=''):
+def plot_confusion_matrix(cm, class_names, parameters_dict = {}, title='', figsize=(8, 8)):
     """
     Returns a matplotlib figure containing the plotted confusion matrix.
 
@@ -121,7 +121,7 @@ def plot_confusion_matrix(cm, class_names, parameters_dict = {}, title=''):
     cm (array, shape = [n, n]): a confusion matrix of integer classes
     class_names (array, shape = [n]): String names of the integer classes
     """
-    figure = plt.figure(figsize=(8, 8))
+    figure = plt.figure(figsize=figsize)
     plt.imshow(cm, interpolation='nearest', cmap=plt.cm.Blues)
     plt.title(title.replace('_', ' '))
     plt.colorbar()
