@@ -29,6 +29,8 @@ sys.path.append(lib_path2)
 import tc1 as bmk
 import candle
 
+from utility import *
+
 def eprint(args):
     sys.stderr.write(str(args) + "\n")
 
@@ -142,8 +144,21 @@ def run(gParameters, train_data, test_data):
 
     score = model.evaluate(X_test, Y_test, verbose=0)
 
-    eprint(f'Test score: {score[0]}')
-    eprint(f'Test accuracy: {score[1]}')
+    eprint(f'[DEBUG] Test score: {score[0]}')
+    eprint(f'[DEBUG] Test accuracy: {score[1]}')
+
+    preds_test = model.predict(X_test)
+
+    result_test_class = [np.argmax(y, axis=None, out=None) for y in preds_test]
+    eprint(f'[DEBUG] result_test_class: {result_test_class}')
+
+    eprint('[DEBUG] [4] Calculating plot_confusion_matrix...')
+    Y_test_class = [np.argmax(y, axis=None, out=None) for y in Y_test]
+    cm_val = confusion_matrix(Y_test_class, result_test_class)
+    eprint(f'[DEBUG] cm_val: {cm_val}')
+
+    # Plot Confusion Matrix
+    plot_confusion_matrix(cm_val, list(sorted(set(Y_test_class))), parameters_dict = {}, title=model_name + "confusion_matrix")
 
     # serialize model to JSON
     model_json = model.to_json()
