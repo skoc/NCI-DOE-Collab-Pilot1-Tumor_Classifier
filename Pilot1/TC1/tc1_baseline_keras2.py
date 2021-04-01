@@ -158,7 +158,11 @@ def run(gParameters, train_data, test_data):
     eprint(f'[DEBUG] cm_val: {cm_val}')
 
     # Plot Confusion Matrix
-    plot_confusion_matrix(cm_val, list(sorted(set(Y_test_class))), parameters_dict = {}, title=model_name + "confusion_matrix")
+    plot_confusion_matrix(cm_val, list(sorted(set(Y_test_class))), parameters_dict = {}, title=model_name + "-confusion_matrix")
+
+    df_disease = pd.read_table('type_18_class_labels', header= None, names = ['index', 'name'])
+    lst_names = [df_disease.loc[df_disease["index"]==idx, "name"].values[0] for idx in list(sorted(set(Y_test_class)))]
+    plot_confusion_matrix(cm, lst_names, parameters_dict = {}, title="-disease_confusion_matrix")
 
     # serialize model to JSON
     model_json = model.to_json()
