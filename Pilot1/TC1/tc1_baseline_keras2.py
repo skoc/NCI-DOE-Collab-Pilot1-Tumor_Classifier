@@ -142,6 +142,9 @@ def run(gParameters, train_data, test_data):
                     validation_data=(X_test, Y_test),
                     callbacks = [checkpointer, csv_logger, reduce_lr])
 
+    # Print History in Log Screen
+    print_history(history, validation = True)
+
     score = model.evaluate(X_test, Y_test, verbose=0)
 
     eprint(f'[DEBUG] Test score: {score[0]}')
@@ -158,12 +161,18 @@ def run(gParameters, train_data, test_data):
     eprint(f'[DEBUG] cm_val: {cm_val}')
 
     # Plot Confusion Matrix
-    plot_confusion_matrix(cm_val, list(sorted(set(Y_test_class))), parameters_dict = {}, title=model_name + "-confusion_matrix")
+    plot_confusion_matrix(cm_val, list(sorted(set(Y_test_class))), parameters_dict = {}, title=model_name)
 
     df_disease = pd.read_table('type_18_class_labels', header= None, names = ['index', 'name'])
     lst_names = [df_disease.loc[df_disease["index"]==idx, "name"].values[0] for idx in list(sorted(set(Y_test_class)))]
-    plot_confusion_matrix(cm_val, lst_names, parameters_dict = {}, title=model_name + "-disease_confusion_matrix", figsize=(30,30))
+    plot_confusion_matrix(cm_val, lst_names, parameters_dict = {}, title=model_name + "-disease_", figsize=(20,20))
+    
+    # Plot AUC
+    plot_auc_multi_class(Y_test_class, result_test_class, list(set(Y_test_class)), parameters_dict={}, title=model_name, figsize=(12,12), lst_disease=lst_names)
 
+    # Plot Loss
+    plot_loss(history, parameters_dict={}, title=model_name)
+    
     # serialize model to JSON
     model_json = model.to_json()
     with open("{}/{}.model.json".format(output_dir, model_name), "w") as json_file:
