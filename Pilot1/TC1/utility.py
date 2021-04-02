@@ -109,7 +109,7 @@ def plot_auc_multi_class(y_labels, pred, classes, parameters_dict={}, title='', 
     plt.legend(loc="lower right")
     
     conf = ':'.join(map(str, parameters_dict.values())).replace('[', '').replace(']', '').replace(' ', '').replace(':', '_').replace(',', '-')
-    plt.savefig(title + '_AUC_' + conf + '.png')
+    plt.savefig("plot_auc_" + title + '_' + conf + '.png')
     plt.show()
 
 # TRAINING OR TESTING
@@ -141,7 +141,7 @@ def calculate_metrics(y_labels, prob, pred, average="binary", num_classes = 1):
            np.round(mcc, 3)
 
 # TRAINING
-def plot_loss(history, parameters_dict = {}):
+def plot_loss(history, parameters_dict = {}, title=''):
     loss_train = list(np.log10(history.history['loss']))
     loss_val = list(np.log10(history.history['val_loss']))
     epochs_initial = len(loss_val_initial)
@@ -160,7 +160,7 @@ def plot_loss(history, parameters_dict = {}):
     plt.ylabel('log(Loss)')
     plt.legend(loc='best')
     conf = ':'.join(map(str, parameters_dict.values())).replace('[', '').replace(']', '').replace(' ', '').replace(':','_').replace(',', '-')
-    plt.savefig('Loss_' + conf + '.png')
+    plt.savefig('plot_loss_' + title + '_' + conf + '.png')
     plt.show()
 
 # TRAINING OR TESTING
@@ -176,7 +176,7 @@ def plot_predictions(validation_labels, pred, parameters_dict = {}, title=''):
     plt.legend(loc="best")
     plt.title(title + ' - Truth vs predicted')
     conf = ':'.join(map(str, parameters_dict.values())).replace('[', '').replace(']', '').replace(' ', '').replace(':', '_').replace(',', '-')
-    plt.savefig(title + '_Predictions_' + conf + '.png')
+    plt.savefig("plot_predictions_" + title + '_' + conf + '.png')
     plt.show()
 
 # TRAINING OR TESTING
@@ -209,7 +209,7 @@ def plot_confusion_matrix(cm, class_names, parameters_dict = {}, title='', figsi
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
     conf = ':'.join(map(str, parameters_dict.values())).replace('[', '').replace(']', '').replace(' ', '').replace(':', '_').replace(',', '-')
-    plt.savefig(title + conf + '.png')
+    plt.savefig('plot_confusion-matrix_' + title + "_" + conf + '.png')
 
     # Calculate specificity and fall-out for each class
     FP = cm.sum(axis=0) - np.diag(cm)
