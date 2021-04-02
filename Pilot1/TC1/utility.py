@@ -49,7 +49,7 @@ def plot_auc(y_labels, pred, parameters_dict = {}, title=''):
     plt.savefig(title + '_AUC_' + conf + '.png')
     plt.show()
 
-def plot_auc_multi_class(y_labels, pred, classes, parameters_dict={}, title='', figsize=(12,12)):
+def plot_auc_multi_class(y_labels, pred, classes, parameters_dict={}, title='', figsize=(12,12), lst_disease=None):
 
     # Compute ROC curve and ROC area for each class
     fpr, tpr, roc_auc = dict(), dict(), dict()
@@ -95,10 +95,14 @@ def plot_auc_multi_class(y_labels, pred, classes, parameters_dict={}, title='', 
           color='navy', linestyle=':', linewidth=4)
 
     colors = cycle(['aqua', 'darkorange', 'cornflowerblue'])
+
     for i, color in zip(range(n_classes), colors):
+        if lst_disease:
+            label_str = 'ROC curve of class {0} (area = {1:0.2f})'.format(lst_disease[i], roc_auc[i])
+        else:
+            label_str = 'ROC curve of class {0} (area = {1:0.2f})'.format(i, roc_auc[i])
         plt.plot(fpr[i], tpr[i], color=color, lw=lw,
-              label='ROC curve of class {0} (area = {1:0.2f})'
-              ''.format(i, roc_auc[i]))
+              label=label_str)
 
     plt.plot([0, 1], [0, 1], 'k--', lw=lw)
     plt.xlim([0.0, 1.0])
@@ -144,7 +148,7 @@ def calculate_metrics(y_labels, prob, pred, average="binary", num_classes = 1):
 def plot_loss(history, parameters_dict = {}, title=''):
     loss_train = list(np.log10(history.history['loss']))
     loss_val = list(np.log10(history.history['val_loss']))
-    epochs_initial = len(loss_val_initial)
+    epochs_initial = len(loss_train)
 
     epochs = range(1, epochs_initial + 1)
     min_loss = min(loss_train + loss_val)
