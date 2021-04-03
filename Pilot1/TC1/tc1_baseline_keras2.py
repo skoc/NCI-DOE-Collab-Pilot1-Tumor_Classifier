@@ -262,9 +262,9 @@ def run(gParameters, train_data, test_data):
     return history
 
 
-def main(train_data, test_data):
+def main(train_data, test_data, config_file):
 
-    gParameters = initialize_parameters()
+    gParameters = initialize_parameters(config_file)
     run(gParameters, train_data, test_data)
 
 if __name__ == '__main__':
@@ -273,15 +273,15 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--train_data', help="Train Data from the Platform", required=True)
     parser.add_argument('--test_data', help="Test Data from the Platform", required=True)
-    # parser.add_argument('--config_file', help="Parameters of the model", required=True)
+    parser.add_argument('--config_file', help="Parameters of the model", default='tc1_default_model.json')
 
     args = parser.parse_args()
 
     train_data = args.train_data
     test_data = args.test_data
-    # tc1_default_model = args.config_file
+    config_file = args.config_file
 
-    main(train_data, test_data)
+    main(train_data, test_data, config_file)
 
     try:
         K.clear_session()
