@@ -148,7 +148,7 @@ def calculate_metrics(y_labels, prob, pred, average="binary", num_classes = 1):
 def plot_loss(history, parameters_dict = {}, title='', figsize=(12, 8)):
     loss_train = list(history.history['loss'])
     loss_val = list(history.history['val_loss'])
-    epochs_initial = 1#len(loss_train)
+    epochs_initial = len(loss_train)
 
     epochs = range(1, epochs_initial + 1)
     min_loss = min(loss_train + loss_val)
