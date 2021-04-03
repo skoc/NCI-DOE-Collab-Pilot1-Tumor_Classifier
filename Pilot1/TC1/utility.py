@@ -150,7 +150,7 @@ def plot_loss(history, parameters_dict = {}, title='', figsize=(12, 8)):
     loss_val = list(history.history['val_loss'])
     epochs_min= np.argmin(loss_val)
 
-    epochs = range(1, epochs_initial + 1)
+    epochs = range(1, len(loss_train) + 1)
     min_loss = min(loss_train + loss_val)
 
     plt.figure(figsize=figsize)
