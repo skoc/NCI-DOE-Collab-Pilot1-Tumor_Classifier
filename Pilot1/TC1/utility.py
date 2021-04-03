@@ -94,9 +94,7 @@ def plot_auc_multi_class(y_labels, pred, classes, parameters_dict={}, title='', 
                 ''.format(roc_auc["macro"]),
           color='navy', linestyle=':', linewidth=4)
 
-    colors = cycle(['Greys', 'Purples', 'Blues', 'Greens', 'Oranges', 'Reds',
-                     'YlOrBr', 'YlOrRd', 'OrRd', 'PuRd', 'RdPu', 'BuPu',
-                      'GnBu', 'PuBu', 'YlGnBu', 'PuBuGn', 'BuGn', 'YlGn'])
+    colors = plt.cm.rainbow(np.linspace(0, 1, n_classes))
 
     for i, color in zip(range(n_classes), colors):
         if lst_disease:
