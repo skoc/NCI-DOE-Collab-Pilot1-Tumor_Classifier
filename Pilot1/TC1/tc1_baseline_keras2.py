@@ -189,10 +189,10 @@ def run(gParameters, train_data, test_data):
 
     eprint('[DEBUG] Stats [6] Generating report...')
 
-    conf_col = ':'.join(gParameters.keys())
+    conf_col = ':'.join(list(gParameters.keys())[1:]) # skip data_url for better visual
     columns = [conf_col] + list(d.keys())
     df_out = pd.DataFrame(columns=columns)
-    df_out.loc[0] = [':'.join(map(str, gParameters.values()))] + list(d.values())
+    df_out.loc[0] = [':'.join(map(str, list(gParameters.values())[1:]))] + list(d.values())
     df_out.to_csv('report_' + model_name + '.csv', index=False)
 
     eprint('[DEBUG] Stats Done!')
