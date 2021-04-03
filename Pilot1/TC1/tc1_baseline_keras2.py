@@ -158,6 +158,10 @@ def run(gParameters, train_data, test_data):
     Y_test_class = [np.argmax(y, axis=None, out=None) for y in Y_test]
 
     ###################################################
+
+    # Decode Class Labels - Disease Types
+    df_disease = pd.read_table('type_18_class_labels', header= None, names = ['index', 'name'])
+    lst_names = [df_disease.loc[df_disease["index"]==idx, "name"].values[0] for idx in list(sorted(set(Y_test_class)))]
     
     # Plot AUC
     eprint('[DEBUG] Stats [1] Calculating plot_auc_multi_class...')
@@ -181,6 +185,7 @@ def run(gParameters, train_data, test_data):
     cm_val = confusion_matrix(Y_test_class, result_test_class)
     eprint(f'[DEBUG] cm_val: {cm_val}')
     d['TN Rate'], d['FP Rate'] = plot_confusion_matrix(cm_val, list(sorted(set(Y_test_class))), parameters_dict = {}, title=model_name)
+    plot_confusion_matrix(cm_val, lst_names, parameters_dict = {}, title=model_name + "-disease_", figsize=(20,20))
 
     eprint('[DEBUG] Stats [6] Generating report...')
 
@@ -193,10 +198,6 @@ def run(gParameters, train_data, test_data):
     eprint('[DEBUG] Stats Done!')
 
     ###################################################
-
-    df_disease = pd.read_table('type_18_class_labels', header= None, names = ['index', 'name'])
-    lst_names = [df_disease.loc[df_disease["index"]==idx, "name"].values[0] for idx in list(sorted(set(Y_test_class)))]
-    plot_confusion_matrix(cm_val, lst_names, parameters_dict = {}, title=model_name + "-disease_", figsize=(20,20))
     
     # serialize model to JSON
     model_json = model.to_json()
