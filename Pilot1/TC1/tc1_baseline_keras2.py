@@ -155,26 +155,48 @@ def run(gParameters, train_data, test_data):
     result_test_class = [np.argmax(y, axis=None, out=None) for y in preds_test]
     eprint(f'[DEBUG] result_test_class: {result_test_class}')
 
-    eprint('[DEBUG] [4] Calculating plot_confusion_matrix...')
     Y_test_class = [np.argmax(y, axis=None, out=None) for y in Y_test]
+
+    ###################################################
+    
+    # Plot AUC
+    eprint('[DEBUG] Stats [1] Calculating plot_auc_multi_class...')
+    plot_auc_multi_class(Y_test_class, result_test_class, list(set(Y_test_class)), parameters_dict={}, title=model_name, figsize=(12,12), lst_disease=lst_names)
+
+    # Plot Loss
+    eprint('[DEBUG] Stats [2] Calculating plot_loss...')
+    plot_loss(history, parameters_dict={}, title=model_name)
+
+    # Plot Prediction
+    eprint('[DEBUG] Stats [3] Calculating plot_predictions...')
+    plot_predictions(Y_test_class, result_test_class, parameters_dict = {}, title=model_name)
+
+    # Calculate Metrics
+    eprint('[DEBUG] Stats [4] Calculating calculate_metrics...')
+    d = {}
+    d['Accuracy'], d['Precision'], d['Recall'], d['F-Score'] = calculate_metrics(Y_test_class, result_test_class, average="macro")
+    
+    # Plot Confusion Matrix
+    eprint('[DEBUG] Stats [5] Calculating confusion_matrix...')
     cm_val = confusion_matrix(Y_test_class, result_test_class)
     eprint(f'[DEBUG] cm_val: {cm_val}')
+    d['TN Rate'], d['FP Rate'] = plot_confusion_matrix(cm_val, list(sorted(set(Y_test_class))), parameters_dict = {}, title=model_name)
 
-    # Plot Confusion Matrix
-    plot_confusion_matrix(cm_val, list(sorted(set(Y_test_class))), parameters_dict = {}, title=model_name)
+    eprint('[DEBUG] Stats [6] Generating report...')
+
+    conf_col = ':'.join(gParameters.keys())
+    columns = [conf_col] + list(d.keys())
+    df_out = pd.DataFrame(columns=columns)
+    df_out.loc[0] = [':'.join(map(str, gParameters.values()))] + list(d.values())
+    df_out.to_csv('report_' + model_name + '.csv', index=False)
+
+    eprint('[DEBUG] Stats Done!')
+
+    ###################################################
 
     df_disease = pd.read_table('type_18_class_labels', header= None, names = ['index', 'name'])
     lst_names = [df_disease.loc[df_disease["index"]==idx, "name"].values[0] for idx in list(sorted(set(Y_test_class)))]
     plot_confusion_matrix(cm_val, lst_names, parameters_dict = {}, title=model_name + "-disease_", figsize=(20,20))
-    
-    # Plot AUC
-    plot_auc_multi_class(Y_test_class, result_test_class, list(set(Y_test_class)), parameters_dict={}, title=model_name, figsize=(12,12), lst_disease=lst_names)
-
-    # Plot Loss
-    plot_loss(history, parameters_dict={}, title=model_name)
-
-    # Plot Prediction
-    plot_predictions(Y_test_class, result_test_class, parameters_dict = {}, title=model_name)
     
     # serialize model to JSON
     model_json = model.to_json()
