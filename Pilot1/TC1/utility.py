@@ -145,15 +145,15 @@ def calculate_metrics(y_labels, prob, pred, average="binary", num_classes = 1):
            np.round(mcc, 3)
 
 # TRAINING
-def plot_loss(history, parameters_dict = {}, title=''):
-    loss_train = list(np.log10(history.history['loss']))
-    loss_val = list(np.log10(history.history['val_loss']))
-    epochs_initial = len(loss_train)
+def plot_loss(history, parameters_dict = {}, title='', figsize=(12, 8)):
+    loss_train = list(history.history['loss'])
+    loss_val = list(history.history['val_loss'])
+    epochs_initial = 1#len(loss_train)
 
     epochs = range(1, epochs_initial + 1)
     min_loss = min(loss_train + loss_val)
 
-    plt.figure(figsize=(12, 8))
+    plt.figure(figsize=figsize)
     plt.plot(epochs, loss_train, 'g', label='Training loss')
     plt.plot(epochs, loss_val, 'b', label='Validation loss')
     plt.title('Training vs Validation loss')
