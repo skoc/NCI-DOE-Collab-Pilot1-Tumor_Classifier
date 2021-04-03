@@ -120,23 +120,12 @@ def plot_auc_multi_class(y_labels, pred, classes, parameters_dict={}, title='', 
 def calculate_metrics(y_labels, pred, average="macro"):
 
     precision, recall, fscore, _ = precision_recall_fscore_support(y_labels, pred, average=average)
-
-    precision_array, recall_array, _, _ = precision_recall_fscore_support(y_labels, pred, average=None)
-    sorted_pairs = sorted(zip(recall_array, precision_array), key=lambda x: x[0])
-    tuples = zip(*sorted_pairs)
-    recall_array, precision_array = [list(tuple) for tuple in tuples]
-    auprc = auc(recall_array, precision_array)
-
     acc = accuracy_score(y_labels, pred)
 
-    mcc = matthews_corrcoef(y_labels, pred)
-
     return np.round(100 * acc, 3), \
-           np.round(100 * auprc, 3), \
            np.round(100 * precision, 3), \
            np.round(100 * recall, 3), \
-           np.round(100 * fscore, 3), \
-           np.round(mcc, 3)
+           np.round(100 * fscore, 3)
 
 # TRAINING
 def plot_loss(history, parameters_dict = {}, title='', figsize=(12, 8)):
