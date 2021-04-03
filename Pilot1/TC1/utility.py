@@ -117,13 +117,8 @@ def plot_auc_multi_class(y_labels, pred, classes, parameters_dict={}, title='', 
     plt.show()
 
 # TRAINING OR TESTING
-def calculate_metrics(y_labels, prob, pred, average="binary", num_classes = 1):
-    if num_classes == 2:
-        roc_auc = roc_auc_score(y_labels, prob[:, 1], multi_class='ovr')
-    else:
-        roc_auc = roc_auc_score(y_labels, prob, multi_class='ovr')
+def calculate_metrics(y_labels, pred, average="macro"):
 
-    # loss = log_loss(y_labels, prob, eps=1e-15, normalize=True)
     precision, recall, fscore, _ = precision_recall_fscore_support(y_labels, pred, average=average)
 
     precision_array, recall_array, _, _ = precision_recall_fscore_support(y_labels, pred, average=None)
@@ -137,7 +132,6 @@ def calculate_metrics(y_labels, prob, pred, average="binary", num_classes = 1):
     mcc = matthews_corrcoef(y_labels, pred)
 
     return np.round(100 * acc, 3), \
-           np.round(100 * roc_auc, 3), \
            np.round(100 * auprc, 3), \
            np.round(100 * precision, 3), \
            np.round(100 * recall, 3), \
