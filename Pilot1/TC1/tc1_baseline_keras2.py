@@ -172,6 +172,9 @@ def run(gParameters, train_data, test_data):
 
     # Plot Loss
     plot_loss(history, parameters_dict={}, title=model_name)
+
+    # Plot Prediction
+    plot_predictions(Y_test_class, result_test_class, parameters_dict = {}, title=model_name)
     
     # serialize model to JSON
     model_json = model.to_json()
