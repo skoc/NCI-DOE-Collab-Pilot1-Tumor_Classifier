@@ -189,7 +189,7 @@ def run(gParameters, train_data, test_data):
 
     eprint('[DEBUG] Stats [6] Generating report...')
 
-    conf_col = ':'.join(list(gParameters.keys())[1:]) # skip data_url for better visual
+    conf_col = ':'.join(list(gParameters.keys())[1:15]) # skip some keys for better visual
     columns = [conf_col] + list(d.keys())
     df_out = pd.DataFrame(columns=columns)
     df_out.loc[0] = [':'.join(map(str, list(gParameters.values())[1:]))] + list(d.values())
