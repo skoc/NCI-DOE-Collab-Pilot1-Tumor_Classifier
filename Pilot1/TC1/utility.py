@@ -148,7 +148,7 @@ def calculate_metrics(y_labels, prob, pred, average="binary", num_classes = 1):
 def plot_loss(history, parameters_dict = {}, title='', figsize=(12, 8)):
     loss_train = list(history.history['loss'])
     loss_val = list(history.history['val_loss'])
-    epochs_initial = len(loss_train)
+    epochs_min= np.argmin(loss_val)
 
     epochs = range(1, epochs_initial + 1)
     min_loss = min(loss_train + loss_val)
@@ -157,9 +157,9 @@ def plot_loss(history, parameters_dict = {}, title='', figsize=(12, 8)):
     plt.plot(epochs, loss_train, 'g', label='Training loss')
     plt.plot(epochs, loss_val, 'b', label='Validation loss')
     plt.title('Training vs Validation loss')
-    plt.axvline(x=epochs_initial, c='red', ymax=0.99, ymin=0.01, linestyle='--')
+    plt.axvline(x=loss_val[epochs_min], c='red', ymax=0.99, ymin=0.01, linestyle='--')
     plt.xticks(epochs)
-    plt.text(x=epochs_initial - 0.8, y=min_loss - 0.15, s='initial', c='red')
+    plt.text(x=loss_val[epochs_min] - 0.8, y=min_loss - 0.15, s='epoch_best', c='red')
     plt.xlabel('Epochs')
     plt.ylabel('log(Loss)')
     plt.legend(loc='best')
@@ -168,9 +168,9 @@ def plot_loss(history, parameters_dict = {}, title='', figsize=(12, 8)):
     plt.show()
 
 # TRAINING OR TESTING
-def plot_predictions(validation_labels, pred, parameters_dict = {}, title=''):
+def plot_predictions(validation_labels, pred, parameters_dict = {}, title='', figsize=(30, 10)):
     num_samples_to_show = np.min([len(pred), 100])
-    plt.figure(figsize=(30, 10))
+    plt.figure(figsize=figsize)
     plt.plot(range(num_samples_to_show), pred[:num_samples_to_show], 'ys', label='Predicted_value')
     plt.plot(range(num_samples_to_show), validation_labels[:num_samples_to_show], 'r*', label='Test_value')
 
