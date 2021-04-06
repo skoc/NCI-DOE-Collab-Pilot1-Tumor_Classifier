@@ -192,10 +192,12 @@ def run(gParameters, train_data, test_data, default_model = 'tc1_default_model.j
     # Generate Report
     eprint('[DEBUG] Stats [6] Generating report...')
 
-    conf_col = ':'.join(list(gParameters.keys())[1:15]) # skip some keys for better visual
+    lst_row = ['model_name', 'epochs', 'dense', 'out_activation', 'optimizer', 'metrics', 'dropout', 'conv', 'batch_size', 'loss', 'pool']
+    dict_row = {k:v for k, v in gParameters.items() if k in lst_row}
+    conf_col = ':'.join(list(dict_row.keys())) # skip some keys for better visual
     columns = [conf_col] + list(d.keys())
     df_out = pd.DataFrame(columns=columns)
-    df_out.loc[0] = [':'.join(map(str, list(gParameters.values())[1:15]))] + list(d.values())
+    df_out.loc[0] = [':'.join(map(str, list(dict_row.values())))] + list(d.values())
     name_report = 'report_' + model_name + '_' + default_model.split('/')[-1].split('.')[0] + '.csv'
     df_out.to_csv(name_report, index=False)
 
