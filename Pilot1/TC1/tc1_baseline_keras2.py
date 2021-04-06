@@ -22,6 +22,8 @@ from keras.callbacks import ModelCheckpoint, CSVLogger, ReduceLROnPlateau
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, MaxAbsScaler
 
+os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
+
 file_path = os.path.dirname(os.path.realpath(__file__))
 lib_path2 = os.path.abspath(os.path.join(file_path, '..', '..', 'common'))
 sys.path.append(lib_path2)
