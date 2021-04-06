@@ -50,7 +50,7 @@ def initialize_parameters(default_model = 'tc1_default_model.json'):
     return gParameters
 
 
-def run(gParameters, train_data, test_data):
+def run(gParameters, train_data, test_data, default_model = 'tc1_default_model.json'):
 
     X_train, Y_train, X_test, Y_test = bmk.load_data(gParameters, train_data, test_data)
 
@@ -189,13 +189,15 @@ def run(gParameters, train_data, test_data):
     d['TN Rate'], d['FP Rate'] = plot_confusion_matrix(cm_val, list(sorted(set(Y_test_class))), parameters_dict = {}, title=model_name)
     plot_confusion_matrix(cm_val, lst_names, parameters_dict = {}, title=model_name + "-disease_", figsize=(20,20))
 
+    # Generate Report
     eprint('[DEBUG] Stats [6] Generating report...')
 
     conf_col = ':'.join(list(gParameters.keys())[1:15]) # skip some keys for better visual
     columns = [conf_col] + list(d.keys())
     df_out = pd.DataFrame(columns=columns)
-    df_out.loc[0] = [':'.join(map(str, list(gParameters.values())[1:]))] + list(d.values())
-    df_out.to_csv('report_' + model_name + '.csv', index=False)
+    df_out.loc[0] = [':'.join(map(str, list(gParameters.values())[1:15]))] + list(d.values())
+    name_report = 'report_' + model_name + '_' + default_model.split('/')[-1].split('.')[0] + '.csv'
+    df_out.to_csv(name_report, index=False)
 
     eprint('[DEBUG] Stats Done!')
 
@@ -267,7 +269,7 @@ def run(gParameters, train_data, test_data):
 def main(train_data, test_data, config_file):
 
     gParameters = initialize_parameters(config_file)
-    run(gParameters, train_data, test_data)
+    run(gParameters, train_data, test_data, config_file)
 
 if __name__ == '__main__':
 
