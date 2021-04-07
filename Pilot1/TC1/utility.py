@@ -196,7 +196,7 @@ def plot_confusion_matrix(cm, class_names, parameters_dict = {}, title='', figsi
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
     conf = ':'.join(map(str, parameters_dict.values())).replace('[', '').replace(']', '').replace(' ', '').replace(':', '_').replace(',', '-')
-    plt.savefig('plot_confusion-matrix_' + title + "_" + conf + '.png')
+    plt.savefig('plot_confusion_matrix_' + title + "_" + conf + '.png')
 
     # Calculate specificity and fall-out for each class
     FP = cm.sum(axis=0) - np.diag(cm)
