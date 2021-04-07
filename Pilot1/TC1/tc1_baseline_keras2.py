@@ -54,6 +54,13 @@ def run(gParameters, train_data, test_data, default_model = 'tc1_default_model.j
 
     X_train, Y_train, X_test, Y_test = bmk.load_data(gParameters, train_data, test_data)
 
+    # Filter args for better output naming
+    lst_row = ['model_name', 'epochs', 'dense', 'out_activation', \
+               'optimizer', 'metrics', 'dropout', 'conv', \
+               'batch_size', 'loss', 'pool']
+    dict_row = {k:v for k, v in gParameters.items() if k in lst_row}
+    name_unique_ext = ':'.join(map(str, dict_row.values())).replace('[', '').replace(']', '').replace(' ', '').replace(':', '_').replace(',', '-')
+
     eprint(f'X_train shape: {X_train.shape}')
     eprint(f'X_test shape: {X_test.shape}')
 
@@ -131,9 +138,9 @@ def run(gParameters, train_data, test_data, default_model = 'tc1_default_model.j
     
     # set up callbacks to do work during model training..
     model_name = gParameters['model_name']
-    path = '{}/{}.autosave.model.h5'.format(output_dir, model_name)
+    path = '{}/trained_model_best{}.autosave.model.h5'.format(output_dir, name_unique_ext)
     checkpointer = ModelCheckpoint(filepath=path, verbose=1, save_weights_only=False, save_best_only=True)
-    csv_logger = CSVLogger('{}/{}.training.csv'.format(output_dir, model_name))
+    csv_logger = CSVLogger('{}/log{}.training.csv'.format(output_dir, name_unique_ext))
     
     reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=10, verbose=1, mode='auto', epsilon=0.0001, cooldown=0, min_lr=0)
 
@@ -160,9 +167,6 @@ def run(gParameters, train_data, test_data, default_model = 'tc1_default_model.j
     Y_test_class = [np.argmax(y, axis=None, out=None) for y in Y_test]
 
     ###################################################
-    # Filter args for better plot naming
-    lst_row = ['model_name', 'epochs', 'dense', 'out_activation', 'optimizer', 'metrics', 'dropout', 'conv', 'batch_size', 'loss', 'pool']
-    dict_row = {k:v for k, v in gParameters.items() if k in lst_row}
 
     # Decode Class Labels - Disease Types
     df_disease = pd.read_table('type_18_class_labels', header= None, names = ['index', 'name'])
@@ -208,35 +212,35 @@ def run(gParameters, train_data, test_data, default_model = 'tc1_default_model.j
     
     # serialize model to JSON
     model_json = model.to_json()
-    with open("{}/{}.model.json".format(output_dir, model_name), "w") as json_file:
+    with open("{}/trained_model{}.model.json".format(output_dir, name_unique_ext), "w") as json_file:
         json_file.write(model_json)
 
     # serialize model to YAML
     model_yaml = model.to_yaml()
-    with open("{}/{}.model.yaml".format(output_dir, model_name), "w") as yaml_file:
+    with open("{}/trained_model{}.model.yaml".format(output_dir, name_unique_ext), "w") as yaml_file:
         yaml_file.write(model_yaml)
 
 
     # serialize weights to HDF5
-    model.save_weights("{}/{}.model.h5".format(output_dir, model_name))
+    model.save_weights("{}/trained_model{}.model.h5".format(output_dir, name_unique_ext))
     eprint("[DEBUG] Saved model to disk")
 
     # load json and create model
-    json_file = open('{}/{}.model.json'.format(output_dir, model_name), 'r')
+    json_file = open('{}/trained_model{}.model.json'.format(output_dir, name_unique_ext), 'r')
     loaded_model_json = json_file.read()
     json_file.close()
     loaded_model_json = model_from_json(loaded_model_json)
 
 
     # load yaml and create model
-    yaml_file = open('{}/{}.model.yaml'.format(output_dir, model_name), 'r')
+    yaml_file = open('{}/trained_model{}.model.yaml'.format(output_dir, name_unique_ext), 'r')
     loaded_model_yaml = yaml_file.read()
     yaml_file.close()
     loaded_model_yaml = model_from_yaml(loaded_model_yaml)
 
 
     # load weights into new model
-    loaded_model_json.load_weights('{}/{}.model.h5'.format(output_dir, model_name))
+    loaded_model_json.load_weights('{}/trained_model{}.model.h5'.format(output_dir, name_unique_ext))
     eprint("[DEBUG] Loaded json model from disk")
 
     # evaluate json loaded model on test data
@@ -252,7 +256,7 @@ def run(gParameters, train_data, test_data, default_model = 'tc1_default_model.j
 
 
     # load weights into new model
-    loaded_model_yaml.load_weights('{}/{}.model.h5'.format(output_dir, model_name))
+    loaded_model_yaml.load_weights('{}/trained_model{}.model.h5'.format(output_dir, name_unique_ext))
     eprint(f"[DEBUG] Loaded yaml model from disk")
 
     # evaluate loaded model on test data
