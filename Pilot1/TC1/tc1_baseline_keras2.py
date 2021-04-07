@@ -160,6 +160,9 @@ def run(gParameters, train_data, test_data, default_model = 'tc1_default_model.j
     Y_test_class = [np.argmax(y, axis=None, out=None) for y in Y_test]
 
     ###################################################
+    # Filter args for better plot naming
+    lst_row = ['model_name', 'epochs', 'dense', 'out_activation', 'optimizer', 'metrics', 'dropout', 'conv', 'batch_size', 'loss', 'pool']
+    dict_row = {k:v for k, v in gParameters.items() if k in lst_row}
 
     # Decode Class Labels - Disease Types
     df_disease = pd.read_table('type_18_class_labels', header= None, names = ['index', 'name'])
@@ -167,15 +170,15 @@ def run(gParameters, train_data, test_data, default_model = 'tc1_default_model.j
     
     # Plot AUC
     eprint('[DEBUG] Stats [1] Calculating plot_auc_multi_class...')
-    plot_auc_multi_class(Y_test_class, result_test_class, list(set(Y_test_class)), parameters_dict={}, title=model_name, figsize=(12,12), lst_disease=lst_names)
+    plot_auc_multi_class(Y_test_class, result_test_class, list(set(Y_test_class)), parameters_dict=dict_row, title='', figsize=(12,12), lst_disease=lst_names)
 
     # Plot Loss
     eprint('[DEBUG] Stats [2] Calculating plot_loss...')
-    plot_loss(history, parameters_dict={}, title=model_name)
+    plot_loss(history, parameters_dict=dict_row, title='')
 
     # Plot Prediction
     eprint('[DEBUG] Stats [3] Calculating plot_predictions...')
-    plot_predictions(Y_test_class, result_test_class, parameters_dict = {}, title=model_name)
+    plot_predictions(Y_test_class, result_test_class, parameters_dict = dict_row, title='')
 
     # Calculate Metrics
     eprint('[DEBUG] Stats [4] Calculating calculate_metrics...')
@@ -186,14 +189,12 @@ def run(gParameters, train_data, test_data, default_model = 'tc1_default_model.j
     eprint('[DEBUG] Stats [5] Calculating confusion_matrix...')
     cm_val = confusion_matrix(Y_test_class, result_test_class)
     eprint(f'[DEBUG] cm_val: {cm_val}')
-    d['TN Rate'], d['FP Rate'] = plot_confusion_matrix(cm_val, list(sorted(set(Y_test_class))), parameters_dict = {}, title=model_name)
-    plot_confusion_matrix(cm_val, lst_names, parameters_dict = {}, title=model_name + "-disease_", figsize=(20,20))
+    # d['TN Rate'], d['FP Rate'] = plot_confusion_matrix(cm_val, list(sorted(set(Y_test_class))), parameters_dict = {}, title=model_name)
+    d['TN Rate'], d['FP Rate'] = plot_confusion_matrix(cm_val, lst_names, parameters_dict = dict_row, title='', figsize=(20,20))
 
     # Generate Report
     eprint('[DEBUG] Stats [6] Generating report...')
 
-    lst_row = ['model_name', 'epochs', 'dense', 'out_activation', 'optimizer', 'metrics', 'dropout', 'conv', 'batch_size', 'loss', 'pool']
-    dict_row = {k:v for k, v in gParameters.items() if k in lst_row}
     conf_col = ':'.join(list(dict_row.keys())) # skip some keys for better visual
     columns = [conf_col] + list(d.keys())
     df_out = pd.DataFrame(columns=columns)
