@@ -117,8 +117,8 @@ def prepare_detailed_outputs(model,X_test, Y_test):
     plot_auc_multi_class(Y_test_class, result_test_class, list(set(Y_test_class)), parameters_dict=dict_row, title='', figsize=(12,12), lst_disease=lst_names)
 
     # Plot Loss
-    eprint('[DEBUG] Stats [2] Calculating plot_loss...')
-    plot_loss(history, parameters_dict=dict_row, title='')
+    # eprint('[DEBUG] Stats [2] Calculating plot_loss...')
+    # plot_loss(history, parameters_dict=dict_row, title='')
 
     # Plot Prediction
     eprint('[DEBUG] Stats [3] Calculating plot_predictions...')
