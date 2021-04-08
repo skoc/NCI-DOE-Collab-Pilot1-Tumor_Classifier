@@ -94,10 +94,10 @@ def run(gParameters, trained_model_json, trained_model_h5, test_data):
     df_out.loc[0] = list(dict_output.values())
     df_out.to_csv(gParameters['model_name'] + '.csv', index=False)
 
-    prepare_detailed_outputs(X_test, Y_test)
+    prepare_detailed_outputs(loaded_model_json,X_test, Y_test)
 
 
-def prepare_detailed_outputs(X_test, Y_test):
+def prepare_detailed_outputs(model,X_test, Y_test):
     dict_row={"test":"test"}
     preds_test = model.predict(X_test)
 
