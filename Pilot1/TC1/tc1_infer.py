@@ -143,7 +143,7 @@ def prepare_detailed_outputs(model,X_test, Y_test):
     columns = [conf_col] + list(d.keys())
     df_out = pd.DataFrame(columns=columns)
     df_out.loc[0] = [':'.join(map(str, list(dict_row.values())))] + list(d.values())
-    name_report = 'report_' + default_model.split('/')[-1].split('.')[0] + '.csv'
+    name_report = 'report_testing.csv'
     df_out.to_csv(name_report, index=False)
 
     eprint('[DEBUG] Stats Done!')
