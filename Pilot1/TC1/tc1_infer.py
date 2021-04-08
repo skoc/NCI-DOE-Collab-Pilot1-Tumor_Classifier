@@ -29,6 +29,8 @@ sys.path.append(lib_path2)
 import tc1 as bmk
 import candle
 
+from utility import *
+
 def eprint(args):
     sys.stderr.write(str(args) + "\n")
 
@@ -91,6 +93,60 @@ def run(gParameters, trained_model_json, trained_model_h5, test_data):
     df_out = pd.DataFrame(columns=columns)
     df_out.loc[0] = list(dict_output.values())
     df_out.to_csv(gParameters['model_name'] + '.csv', index=False)
+
+    prepare_detailed_outputs(X_test, Y_test)
+
+
+def prepare_detailed_outputs(X_test, Y_test):
+    dict_row={"test":"test"}
+    preds_test = model.predict(X_test)
+
+    result_test_class = [np.argmax(y, axis=None, out=None) for y in preds_test]
+    eprint(f'[DEBUG] result_test_class: {result_test_class}')
+
+    Y_test_class = [np.argmax(y, axis=None, out=None) for y in Y_test]
+
+    ###################################################
+
+    # Decode Class Labels - Disease Types
+    df_disease = pd.read_table('type_18_class_labels', header= None, names = ['index', 'name'])
+    lst_names = [df_disease.loc[df_disease["index"]==idx, "name"].values[0] for idx in list(sorted(set(Y_test_class)))]
+    
+    # Plot AUC
+    eprint('[DEBUG] Stats [1] Calculating plot_auc_multi_class...')
+    plot_auc_multi_class(Y_test_class, result_test_class, list(set(Y_test_class)), parameters_dict=dict_row, title='', figsize=(12,12), lst_disease=lst_names)
+
+    # Plot Loss
+    eprint('[DEBUG] Stats [2] Calculating plot_loss...')
+    plot_loss(history, parameters_dict=dict_row, title='')
+
+    # Plot Prediction
+    eprint('[DEBUG] Stats [3] Calculating plot_predictions...')
+    plot_predictions(Y_test_class, result_test_class, parameters_dict = dict_row, title='')
+
+    # Calculate Metrics
+    eprint('[DEBUG] Stats [4] Calculating calculate_metrics...')
+    d = {}
+    d['Accuracy'], d['Precision'], d['Recall'], d['F-Score'] = calculate_metrics(Y_test_class, result_test_class, average="macro")
+    
+    # Plot Confusion Matrix
+    eprint('[DEBUG] Stats [5] Calculating confusion_matrix...')
+    cm_val = confusion_matrix(Y_test_class, result_test_class)
+    eprint(f'[DEBUG] cm_val: {cm_val}')
+    # d['TN Rate'], d['FP Rate'] = plot_confusion_matrix(cm_val, list(sorted(set(Y_test_class))), parameters_dict = {}, title=model_name)
+    d['TN Rate'], d['FP Rate'] = plot_confusion_matrix(cm_val, lst_names, parameters_dict = dict_row, title='', figsize=(20,20))
+
+    # Generate Report
+    eprint('[DEBUG] Stats [6] Generating report...')
+
+    conf_col = ':'.join(list(dict_row.keys())) # skip some keys for better visual
+    columns = [conf_col] + list(d.keys())
+    df_out = pd.DataFrame(columns=columns)
+    df_out.loc[0] = [':'.join(map(str, list(dict_row.values())))] + list(d.values())
+    name_report = 'report_' + model_name + '_' + default_model.split('/')[-1].split('.')[0] + '.csv'
+    df_out.to_csv(name_report, index=False)
+
+    eprint('[DEBUG] Stats Done!')
 
 
 def main(trained_model_json, trained_model_h5, test_data, tc1_default_model):
