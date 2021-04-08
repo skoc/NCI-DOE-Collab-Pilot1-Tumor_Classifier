@@ -56,7 +56,7 @@ def run(gParameters, train_data, test_data, default_model = 'tc1_default_model.j
 
     # Filter args for better output naming
     lst_row = ['model_name', 'epochs', 'dense', 'out_activation', \
-               'optimizer', 'metrics', 'dropout', 'conv', \
+               'optimizer', 'activation', 'metrics', 'dropout', 'conv', \
                'batch_size', 'loss', 'pool']
     dict_row = {k:v for k, v in gParameters.items() if k in lst_row}
     name_unique_ext = ':'.join(map(str, dict_row.values())).replace('[', '').replace(']', '').replace(' ', '').replace(':', '_').replace(',', '-')
@@ -138,9 +138,9 @@ def run(gParameters, train_data, test_data, default_model = 'tc1_default_model.j
     
     # set up callbacks to do work during model training..
     model_name = gParameters['model_name']
-    path = '{}/trained_model_best{}.autosave.model.h5'.format(output_dir, name_unique_ext)
+    path = '{}/trained_model_best_{}.autosave.model.h5'.format(output_dir, name_unique_ext)
     checkpointer = ModelCheckpoint(filepath=path, verbose=1, save_weights_only=False, save_best_only=True)
-    csv_logger = CSVLogger('{}/log{}.training.csv'.format(output_dir, name_unique_ext))
+    csv_logger = CSVLogger('{}/log_{}.training.csv'.format(output_dir, name_unique_ext))
     
     reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=10, verbose=1, mode='auto', epsilon=0.0001, cooldown=0, min_lr=0)
 
