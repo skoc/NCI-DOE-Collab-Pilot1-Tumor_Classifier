@@ -174,7 +174,7 @@ if __name__ == '__main__':
     tc1_default_model = args.config_file
 
     # Path fix for empty tc1_default_model inputs, when it's copied from the required files section
-    tc1_default_model = os.path.dirname(test_data) + os.path.basename(tc1_default_model)
+    # tc1_default_model = os.path.dirname(test_data) + os.path.basename(tc1_default_model)
 
     main(trained_model_json=trained_model_json, 
         trained_model_h5=trained_model_h5, 
