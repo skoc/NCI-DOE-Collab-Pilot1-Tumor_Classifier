@@ -41,7 +41,8 @@ def initialize_parameters(default_model = 'tc1_default_model.txt'):
     prog='tc1_baseline', desc='Multi-task (DNN) for data extraction from clinical reports - Pilot 3 Benchmark 1')
 
     # Initialize parameters
-    gParameters = candle.finalize_parameters(tc1Bmk)
+    gParameters = candle.finalize_parameters(tc1Bmk,format_config="json")
+    eprint(f"[DEBUG] gParameters: {gParameters}")
     #benchmark.logger.info('Params: {}'.format(gParameters))
 
     return gParameters
